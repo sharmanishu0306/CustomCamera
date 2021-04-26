@@ -67,17 +67,78 @@ import UIKit
 
 struct FramePerSecond30
 {
-    var resolution_720 = 24
-    var resolution_1080 = 52
-    var resolution_4K = 205
+    
+    var resolution_720 : Int
+    {
+        if isChipsetGreaterThan10() == true
+        {
+            return 24
+        }
+        else
+        {
+            return 45
+        }
+    }
+    var resolution_1080 : Int
+    {
+        if isChipsetGreaterThan10() == true
+        {
+            return 52
+        }
+        else
+        {
+            return 102
+        }
+    }
+    var resolution_4K : Int
+    {
+        if isChipsetGreaterThan10() == true
+        {
+            return 205
+        }
+        else
+        {
+            return 415
+        }
+    }
     
 }
 
 struct FramePerSecond60
 {
-    var resolution_720 = 47
-    var resolution_1080 = 104
-    var resolution_4K = 411
+    var resolution_720 : Int
+    {
+        if isChipsetGreaterThan10() == true
+        {
+            return 47
+        }
+        else
+        {
+            return 87
+        }
+    }
+    var resolution_1080 : Int
+    {
+        if isChipsetGreaterThan10() == true
+        {
+            return 104
+        }
+        else
+        {
+            return 200
+        }
+    }
+    var resolution_4K : Int
+    {
+        if isChipsetGreaterThan10() == true
+        {
+            return 411
+        }
+        else
+        {
+            return 776
+        }
+    }
 }
 
 

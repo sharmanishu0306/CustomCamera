@@ -493,7 +493,12 @@ class CameraViewController: UIViewController {
                 guard let self = self else { return }
                 if granted
                 {
-                    self._setupCaptureSession()
+                    DispatchQueue.main.async
+                    {
+                        self._setupCaptureSession()
+                    }
+                    
+                    
                 }
             }
         case .restricted:
@@ -501,7 +506,10 @@ class CameraViewController: UIViewController {
         case .denied:
             break
         case .authorized:
-            _setupCaptureSession()
+            DispatchQueue.main.async
+            {
+                self._setupCaptureSession()
+            }
         @unknown default: break
             
         }

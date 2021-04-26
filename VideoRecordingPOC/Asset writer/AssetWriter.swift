@@ -91,12 +91,31 @@ class AssetWriter
         
         self.assetWriter = try? AVAssetWriter(outputURL: URL(fileURLWithPath: filePath), fileType: AVFileType.mov)
         
-        let writerOutputSettings = [
-            AVVideoCodecKey: AVVideoCodecType.hevc,
-            AVVideoWidthKey: resObj.width,
-            AVVideoHeightKey: resObj.height,
-            AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate]
-            ] as [String : Any]
+        var writerOutputSettings = [String:Any]()
+        if isChipsetGreaterThan10() == true
+        {
+            writerOutputSettings = [
+                AVVideoCodecKey: AVVideoCodecType.hevc,
+                AVVideoWidthKey: resObj.width,
+                AVVideoHeightKey: resObj.height,
+                AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate]
+                ] as [String : Any]
+        }
+        else
+        {
+            writerOutputSettings = [
+                AVVideoCodecKey: AVVideoCodecType.h264,
+                AVVideoWidthKey: resObj.width,
+                AVVideoHeightKey: resObj.height,
+                AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate]
+                ] as [String : Any]
+        }
+//        let writerOutputSettings = [
+//            AVVideoCodecKey: AVVideoCodecType.hevc,
+//            AVVideoWidthKey: resObj.width,
+//            AVVideoHeightKey: resObj.height,
+//            AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate]
+//            ] as [String : Any]
         
         print("Video Setting \(writerOutputSettings)")
         
