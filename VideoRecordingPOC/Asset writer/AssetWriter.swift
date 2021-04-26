@@ -74,15 +74,20 @@ class AssetWriter
         return videoDirectoryPath + "/\(fileName)"
     }
     
-    private func setupWriter(buffer: CMSampleBuffer)
+    func RemoveFolder()
     {
         if FileManager.default.fileExists(atPath: videoDirectoryPath) {
             do {
                 try FileManager.default.removeItem(atPath: videoDirectoryPath)
+                print("Item removed")
             } catch {
                 print("fail to removeItem")
             }
         }
+    }
+    private func setupWriter(buffer: CMSampleBuffer)
+    {
+        self.RemoveFolder()
         do {
             try FileManager.default.createDirectory(atPath: videoDirectoryPath, withIntermediateDirectories: true, attributes: nil)
         } catch {

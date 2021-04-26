@@ -19,9 +19,7 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .brown
         
         let mb = UIDevice.current.freeDiskSpaceInMB
-        let gb = UIDevice.current.ConvertGBintoMB
         print("MB \(mb)")
-        print("GB in MB \(gb)")
     }
 
     override func viewDidAppear(_ animated: Bool) {

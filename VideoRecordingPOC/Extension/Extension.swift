@@ -11,8 +11,30 @@ import UIKit
 
 class Utilis
 {
+    
+    static var videoDirectoryPath: String
+    {
+        let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        return dir + "/Videos"
+    }
+    
     class func deleteFileFromLocalDirectory()
     {
+        
+        if FileManager.default.fileExists(atPath: videoDirectoryPath)
+        {
+            do
+            {
+                try FileManager.default.removeItem(atPath: videoDirectoryPath)
+                print("File Removed SuceessFully")
+            }
+            catch
+            {
+                print("fail to removeItem")
+            }
+        }
+        
+        return
         let filemanager = FileManager.default
         let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] + "/Videos"
         let documentsPath = dir

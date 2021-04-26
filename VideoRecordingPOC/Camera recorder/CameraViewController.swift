@@ -441,6 +441,7 @@ class CameraViewController: UIViewController {
                     self.isStartCapturing = false
                     self._captureSession?.stopRunning()
                     self.assetWriter?.finishWriting()
+                    self.lblDiskRemainingInTime.text = ""
                 }
             }
             
@@ -468,15 +469,17 @@ class CameraViewController: UIViewController {
     
     private func HideTopButtons()
     {
-        UIView.animate(withDuration: 0.35) {
+        UIView.animate(withDuration: 0.35) { [weak self] in
+            guard let self = self else { return }
             self.btnVideoResolution.transform = .init(translationX: self.btnVideoResolution.frame.origin.x + 50, y: 0)
             self.btnVideoResolution.isHidden = true
         } completion: { (check) in
-            UIView.animate(withDuration: 0.30) {
+            UIView.animate(withDuration: 0.30) { [weak self] in
+                guard let self = self else { return }
                 self.btnFPS.transform = .init(translationX: self.btnFPS.frame.origin.x + 50, y: 0)
                 self.btnFPS.isHidden = true
-            } completion: { (check) in
-                
+            } completion: { [weak self](check) in
+                guard let self = self else { return }
                 self.btnFPS.transform = .identity
                 self.btnVideoResolution.transform = .identity
             }
@@ -494,11 +497,9 @@ class CameraViewController: UIViewController {
                 if granted
                 {
                     DispatchQueue.main.async
-                    {
+                    { [weak self] in  guard let self = self else { return }
                         self._setupCaptureSession()
                     }
-                    
-                    
                 }
             }
         case .restricted:
@@ -507,7 +508,7 @@ class CameraViewController: UIViewController {
             break
         case .authorized:
             DispatchQueue.main.async
-            {
+            { [weak self] in  guard let self = self else { return }
                 self._setupCaptureSession()
             }
         @unknown default: break
@@ -609,6 +610,7 @@ class CameraViewController: UIViewController {
         let outputFileName = NSUUID().uuidString + ".mp4"
         assetWriter = AssetWriter(fileName: outputFileName)
         assetWriter!.delegate = self
+        assetWriter!.RemoveFolder()
         session.startRunning()
         _videoOutput = output
         _audioOutput = audiooutput
@@ -841,7 +843,11 @@ class CameraViewController: UIViewController {
             }
         }
         
-        self.TimeObj = TempTimeObj
+        if self.isStartCapturing == false
+        {
+            self.TimeObj = TempTimeObj
+        }
+        
     }
     
     func CheckAndUpdateTimeByTenSecond()

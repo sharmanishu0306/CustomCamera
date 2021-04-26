@@ -136,7 +136,7 @@ struct FramePerSecond60
         }
         else
         {
-            return 776
+            return 409//776
         }
     }
 }
