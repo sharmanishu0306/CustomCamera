@@ -33,29 +33,6 @@ class Utilis
                 print("fail to removeItem")
             }
         }
-        
-        return
-        let filemanager = FileManager.default
-        let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] + "/Videos"
-        let documentsPath = dir
-        if filemanager.fileExists(atPath: dir)
-        {
-            do
-            {
-                try filemanager.removeItem(atPath: documentsPath)
-                print("File Removed SuceessFully")
-                // cehck
-                self.deleteFileFromLocalDirectory()
-            }
-            catch let error as NSError
-            {
-                print(error.debugDescription)
-            }
-        }
-        else
-        {
-            print("File was deleted")
-        }
     }
 }
 

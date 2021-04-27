@@ -330,7 +330,7 @@ class CameraViewController: UIViewController {
     {
         if sender.isSelected == false
         {
-            if UIDevice.current.ConvertGBintoMB <= 200
+            if UIDevice.current.freeDiskSpaceInMB <= 200
             {
                 
                 let controller = UIAlertController(title: "Video Recording", message: "Your storage is almost full.", preferredStyle: .alert)
@@ -589,6 +589,9 @@ class CameraViewController: UIViewController {
         session.addOutput(output)
         session.commitConfiguration()
         
+        if let videoDataOutputConnection = output.connection(with: .video), videoDataOutputConnection.isVideoStabilizationSupported {
+            videoDataOutputConnection.preferredVideoStabilizationMode = .standard
+        }
 
         DispatchQueue.main.async
         {
@@ -599,6 +602,8 @@ class CameraViewController: UIViewController {
             previewView.videoPreviewLayer.session = session
             previewView.frame = self.cameraContainerView.bounds
             previewView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            previewView.videoPreviewLayer.videoGravity = .resizeAspectFill
+            previewView.videoPreviewLayer.position = CGPoint(x:self.cameraContainerView.bounds.midX, y:self.cameraContainerView.bounds.midY)
             if let views = self.cameraContainerView.viewWithTag(2233)
             {
                 views.removeFromSuperview()
