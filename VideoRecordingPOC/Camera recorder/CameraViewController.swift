@@ -590,7 +590,7 @@ class CameraViewController: UIViewController {
         session.commitConfiguration()
         
         if let videoDataOutputConnection = output.connection(with: .video), videoDataOutputConnection.isVideoStabilizationSupported {
-            videoDataOutputConnection.preferredVideoStabilizationMode = .standard
+            videoDataOutputConnection.preferredVideoStabilizationMode = .auto
         }
 
         DispatchQueue.main.async
