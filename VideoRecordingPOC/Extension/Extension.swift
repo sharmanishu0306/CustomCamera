@@ -135,3 +135,19 @@ func isChipsetGreaterThan10() -> Bool
     }
 }
 
+
+extension UIButton
+{
+    func animateButton()
+    {
+        DispatchQueue.main.async
+        {
+            self.transform = .init(scaleX: 0.92, y: 0.92)
+            UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.95, initialSpringVelocity: 1.0, options: .curveEaseOut) {
+                self.transform = .identity
+            } completion: { (check) in
+                
+            }
+        }
+    }
+}

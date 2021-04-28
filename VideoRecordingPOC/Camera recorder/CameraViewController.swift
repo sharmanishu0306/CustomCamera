@@ -69,8 +69,155 @@ class CameraViewController: UIViewController {
     @IBOutlet weak var btnPause : UIButton!
     @IBOutlet weak var lblDiskRemainingInTime : UILabel!
     
+    // New UI Changes
+    
+    @IBOutlet weak var btn720Resolution : UIButton!
+    @IBOutlet weak var btn1080resolution : UIButton!
+    @IBOutlet weak var btn4KResolution : UIButton!
+    @IBOutlet weak var btn30FPS : UIButton!
+    @IBOutlet weak var btn60FPS : UIButton!
+    @IBOutlet weak var lblResolution : UILabel!
+    @IBOutlet weak var lblFPS : UILabel!
+    @IBOutlet weak var viewMainFrameResolutionView : UIView!
+    
+    
+    
+    
     //MARK:- IBAction
     
+    @IBAction func action720Resolution(_ sender : Any)
+    {
+        
+        guard let button = sender as? UIButton else { return }
+        button.animateButton()
+        
+        self.SelectButtons(btn: self.btn720Resolution)
+        self.UnSelectButtons(btn: self.btn1080resolution)
+        self.UnSelectButtons(btn: self.btn4KResolution)
+        
+        if pixelTypeObj == .Pixel_720
+        {
+            
+        }
+        else
+        {
+            self.pixelTypeObj = .Pixel_720
+            SetResolution()
+            let getFps = self.fpsTypeObj == .FPS30 ? 30.0 : 60.0
+            if getFps == 30.0
+            {
+                
+            }
+            else
+            {
+                SetFps(setFPS: getFps)
+            }
+            
+        }
+        
+        
+        
+        
+        
+    }
+    @IBAction func action1080Resolution(_ sender : Any)
+    {
+        guard let button = sender as? UIButton else { return }
+        button.animateButton()
+        
+        self.SelectButtons(btn: self.btn1080resolution)
+        self.UnSelectButtons(btn: self.btn720Resolution)
+        self.UnSelectButtons(btn: self.btn4KResolution)
+        
+        if pixelTypeObj == .Pixel_1080
+        {
+            
+        }
+        else
+        {
+            self.pixelTypeObj = .Pixel_1080
+            SetResolution()
+            let getFps = self.fpsTypeObj == .FPS30 ? 30.0 : 60.0
+            if getFps == 30.0
+            {
+                
+            }
+            else
+            {
+                SetFps(setFPS: getFps)
+            }
+        }
+        
+        
+        
+    }
+    @IBAction func action4KResolution(_ sender : Any)
+    {
+        guard let button = sender as? UIButton else { return }
+        button.animateButton()
+        
+        self.SelectButtons(btn: self.btn4KResolution)
+        self.UnSelectButtons(btn: self.btn1080resolution)
+        self.UnSelectButtons(btn: self.btn720Resolution)
+        
+        if pixelTypeObj == .Pixel_4K
+        {
+            
+        }
+        else
+        {
+            self.pixelTypeObj = .Pixel_4K
+            SetResolution()
+            let getFps = self.fpsTypeObj == .FPS30 ? 30.0 : 60.0
+            if getFps == 30.0
+            {
+                
+            }
+            else
+            {
+                SetFps(setFPS: getFps)
+            }
+        }
+        
+        
+    }
+    @IBAction func action30FPS(_ sender : Any)
+    {
+        guard let button = sender as? UIButton else { return }
+        button.animateButton()
+        
+        self.SelectButtons(btn: self.btn30FPS)
+        self.UnSelectButtons(btn: self.btn60FPS)
+        if fpsTypeObj == .FPS30
+        {
+            
+        }
+        else
+        {
+            self.fpsTypeObj = .FPS30
+            self.SetFps(setFPS: 30.0)
+        }
+        
+    }
+    @IBAction func action60FPS(_ sender : Any)
+    {
+        guard let button = sender as? UIButton else { return }
+        button.animateButton()
+        
+        self.SelectButtons(btn: self.btn60FPS)
+        self.UnSelectButtons(btn: self.btn30FPS)
+        
+        if self.fpsTypeObj == .FPS60
+        {
+            
+        }
+        else
+        {
+            self.fpsTypeObj = .FPS60
+            self.SetFps(setFPS: 60.0)
+        }
+        
+    }
     
     @IBAction func actionPauseRecording(_ sender : Any)
     {
@@ -343,6 +490,10 @@ class CameraViewController: UIViewController {
             }
             else
             {
+                UIView.animate(withDuration: 0.25)
+                {
+                    self.viewMainFrameResolutionView.isHidden = true
+                }
                 
                 self.HideTopButtons()
                 self.isStartCapturing = true
@@ -371,6 +522,16 @@ class CameraViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        DispatchQueue.main.async
+        {
+            self.SetupTheme()
+        }
+        
+    }
+    
+    
+    func SetupTheme()
+    {
         self.viewOuter.backgroundColor = .white
         self.viewOuter.layer.cornerRadius = viewOuter.layer.frame.size.width / 2
         self.viewOuter.clipsToBounds = true
@@ -395,8 +556,38 @@ class CameraViewController: UIViewController {
         self.viewTop.backgroundColor = bgcolor
         self.viewBottom.backgroundColor = bgcolor
         
+        
+        self.btn720Resolution.setTitle("720p*\nHD", for: .normal)
+        self.btn1080resolution.setTitle("1080p\nHD", for: .normal)
+        self.btn4KResolution.setTitle("4K", for: .normal)
+        self.btn30FPS.setTitle("30 fps*", for: .normal)
+        self.btn60FPS.setTitle("60 fps", for: .normal)
+        self.SelectButtons(btn: self.btn720Resolution)
+        self.UnSelectButtons(btn: self.btn1080resolution)
+        self.UnSelectButtons(btn: self.btn4KResolution)
+        self.SelectButtons(btn: self.btn30FPS)
+        self.UnSelectButtons(btn: self.btn60FPS)
+        
+        // hide top btns
+        self.btnFPS.isHidden = true
+        self.btnVideoResolution.isHidden = true
     }
     
+    func SelectButtons(btn : UIButton)
+    {
+        btn.titleLabel?.numberOfLines = 0
+        btn.titleLabel?.textAlignment = .center
+        btn.setTitleColor(WhiteClr, for: .normal)
+        btn.backgroundColor = .black
+    }
+    
+    func UnSelectButtons(btn : UIButton)
+    {
+        btn.titleLabel?.numberOfLines = 0
+        btn.titleLabel?.textAlignment = .center
+        btn.setTitleColor(WhiteClr, for: .normal)
+        btn.backgroundColor = UnSelectedbackgroundClr
+    }
     
     @objc func timerAction()
     {
@@ -620,11 +811,12 @@ class CameraViewController: UIViewController {
         _videoOutput = output
         _audioOutput = audiooutput
         _captureSession = session
-        self.btnFPS.isHidden = false
-        self.btnVideoResolution.isHidden = false
-        self.isHDCapturing = true
-        self.btnFPS.setTitle("30", for: .normal)
-        self.btnVideoResolution.setTitle("720P", for: .normal)
+        
+//        self.btnFPS.isHidden = true
+//        self.btnVideoResolution.isHidden = true
+//        self.isHDCapturing = true
+//        self.btnFPS.setTitle("30", for: .normal)
+//        self.btnVideoResolution.setTitle("720P", for: .normal)
         
         let obj = ResolutionObj()
         obj.framerate = 30
@@ -879,6 +1071,150 @@ class CameraViewController: UIViewController {
         }
     }
     
+    func SetFps(setFPS : Double)
+    {
+        DispatchQueue.main.async
+        { [weak self] in
+            guard let self = self else { return }
+            
+            if let input = self._videoInput
+            {
+                var finalFormat : AVCaptureDevice.Format!
+                var maxFps: Double = 0
+                for vFormat in input.device.formats
+                {
+                    let ranges      = vFormat.videoSupportedFrameRateRanges
+                    let frameRates  = ranges[0]
+                    if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= setFPS
+                    {
+                        maxFps = frameRates.maxFrameRate
+                        if #available(iOS 13.0, *)
+                        {
+                            let dim = vFormat.formatDescription.dimensions
+                            
+                            if self.pixelTypeObj == .Pixel_720
+                            {
+                                if dim.width == 1280 && dim.height == 720
+                                {
+                                    finalFormat = vFormat
+                                    let resolutionObj = ResolutionObj()
+                                    resolutionObj.width = Double(dim.width)
+                                    resolutionObj.height = Double(dim.height)
+                                    resolutionObj.framerate = setFPS
+                                    self.assetWriter?.resObj = resolutionObj
+                                }
+                            }
+                            else
+                            if self.pixelTypeObj == .Pixel_1080
+                            {
+                                if dim.width == 1920 && dim.height == 1080
+                                {
+                                    finalFormat = vFormat
+                                    let resolutionObj = ResolutionObj()
+                                    resolutionObj.width = Double(dim.width)
+                                    resolutionObj.height = Double(dim.height)
+                                    resolutionObj.framerate = setFPS
+                                    self.assetWriter?.resObj = resolutionObj
+                                }
+                            }
+                            else
+                            if self.pixelTypeObj == .Pixel_4K
+                            {
+                                if dim.width == 3840 && dim.height == 2160
+                                {
+                                    finalFormat = vFormat
+                                    let resolutionObj = ResolutionObj()
+                                    resolutionObj.width = Double(dim.width)
+                                    resolutionObj.height = Double(dim.height)
+                                    resolutionObj.framerate = setFPS
+                                    self.assetWriter?.resObj = resolutionObj
+                                }
+                            }
+                            
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+                }
+                
+                print(String(maxFps) + " fps")
+                if let formate = finalFormat
+                {
+                    do
+                {
+                    let camera = input.device
+                    try camera.lockForConfiguration()
+                    camera.activeFormat = formate
+                    camera.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
+                    camera.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
+                    camera.unlockForConfiguration()
+                }
+                    catch(let err)
+                    {
+                        print("error \(err.localizedDescription)")
+                        let controller = UIAlertController(title: "Video Recording", message: err.localizedDescription, preferredStyle: .alert)
+                        let okbtn = UIAlertAction(title: "OK", style: .default) { (_ ) in }
+                        controller.addAction(okbtn)
+                        self.present(controller, animated: true, completion: nil)
+                    }
+                }
+                
+            }
+        
+            self.CalcualateDaysAndHour()
+        }
+    }
+    
+    
+    func SetResolution()
+    {
+        DispatchQueue.main.async
+        { [weak self] in
+            guard let self = self else { return }
+            
+            let resolutionObj = ResolutionObj()
+            if self.pixelTypeObj == .Pixel_720
+            {
+                self._captureSession?.sessionPreset = .hd1280x720
+                resolutionObj.width = 1280
+                resolutionObj.height = 720
+                
+            }
+            else
+            if self.pixelTypeObj == .Pixel_1080
+            {
+                if self._captureSession?.canSetSessionPreset(.hd1920x1080) == true
+                {
+                    self._captureSession?.sessionPreset = .hd1920x1080
+                    resolutionObj.width = 1920
+                    resolutionObj.height = 1080
+                }
+            }
+            else
+            {
+                if self._captureSession?.canSetSessionPreset(.hd4K3840x2160) == true
+                {
+                    self._captureSession?.sessionPreset = .hd4K3840x2160
+                    resolutionObj.width = 3840
+                    resolutionObj.height = 2160
+                }
+                else
+                {
+                    let controller = UIAlertController(title: App_Alert, message: "Unable to set 4K mode..", preferredStyle: .alert)
+                    let okbtn = UIAlertAction(title: "OK", style: .default) { (_ ) in }
+                    controller.addAction(okbtn)
+                    self.present(controller, animated: true, completion: nil)
+                }
+            }
+            
+            let fps = self.fpsTypeObj == .FPS30 ? 30 : 60
+            resolutionObj.framerate = Double(fps)
+            self.assetWriter?.resObj = resolutionObj
+            self.CalcualateDaysAndHour()
+        }
+    }
     
     deinit
     {
@@ -891,7 +1227,7 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate,AVC
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         
-//        print(_videoInput?.device.activeFormat)
+        print(_videoInput?.device.activeFormat)
         
         if self.isStartCapturing == true
         {
