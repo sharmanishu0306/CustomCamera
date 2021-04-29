@@ -20,6 +20,8 @@ class ViewController: UIViewController {
         
         let mb = UIDevice.current.freeDiskSpaceInMB
         print("MB \(mb)")
+        print(UIDevice.modelName)
+        print(CheckCurrentDeviceSupport4KRecording())
     }
 
     override func viewDidAppear(_ animated: Bool) {

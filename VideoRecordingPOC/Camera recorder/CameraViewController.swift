@@ -13,13 +13,6 @@ import AssetsLibrary
 import AVKit
 
 
-protocol GetCMSampleBufferDelegate : class
-{
-    func BufferDelegates( buffer : CMSampleBuffer)
-}
-
-
-
 
 class CameraViewController: UIViewController {
     
@@ -33,22 +26,15 @@ class CameraViewController: UIViewController {
     private var _videoOutput: AVCaptureVideoDataOutput?
     private var _audioOutput : AVCaptureAudioDataOutput?
   
-    
-    
     var assetWriter:AssetWriter?
     var isStartCapturing = false
     var timer = Timer()
     var timeCounter = 0
     
-    var videoDevice : AVCaptureDevice?
     weak var bufferDelegate : GetCMSampleBufferDelegate?
     var _videoInput : AVCaptureDeviceInput?
-    var isHDCapturing = true
     
-    var _frame = 60
-    var _value = 1
-    
-    
+    // Enums and class
     var pixelTypeObj : PixelType = .Pixel_720
     var fpsTypeObj : FPSType = .FPS30
     var TimeObj = TimeRemainingObj()
@@ -79,8 +65,13 @@ class CameraViewController: UIViewController {
     @IBOutlet weak var lblResolution : UILabel!
     @IBOutlet weak var lblFPS : UILabel!
     @IBOutlet weak var viewMainFrameResolutionView : UIView!
-    
-    
+    @IBOutlet weak var viewSelectVideoQualityFrame : UIView!
+    @IBOutlet weak var viewFpsResolutionManagement : UIView!
+    @IBOutlet weak var lblMinutes : UILabel!
+    @IBOutlet weak var lblHours : UILabel!
+    @IBOutlet weak var viewMinuteDot : UIView!
+    @IBOutlet weak var viewHoursDot : UIView!
+    @IBOutlet weak var lblRecommended : UILabel!
     
     
     //MARK:- IBAction
@@ -112,14 +103,12 @@ class CameraViewController: UIViewController {
             {
                 SetFps(setFPS: getFps)
             }
-            
         }
         
         
-        
-        
-        
     }
+    
+    
     @IBAction func action1080Resolution(_ sender : Any)
     {
         guard let button = sender as? UIButton else { return }
@@ -148,9 +137,8 @@ class CameraViewController: UIViewController {
             }
         }
         
-        
-        
     }
+    
     @IBAction func action4KResolution(_ sender : Any)
     {
         guard let button = sender as? UIButton else { return }
@@ -178,9 +166,9 @@ class CameraViewController: UIViewController {
                 SetFps(setFPS: getFps)
             }
         }
-        
-        
     }
+    
+    
     @IBAction func action30FPS(_ sender : Any)
     {
         guard let button = sender as? UIButton else { return }
@@ -197,8 +185,8 @@ class CameraViewController: UIViewController {
             self.fpsTypeObj = .FPS30
             self.SetFps(setFPS: 30.0)
         }
-        
     }
+    
     @IBAction func action60FPS(_ sender : Any)
     {
         guard let button = sender as? UIButton else { return }
@@ -216,8 +204,8 @@ class CameraViewController: UIViewController {
             self.fpsTypeObj = .FPS60
             self.SetFps(setFPS: 60.0)
         }
-        
     }
+    
     
     @IBAction func actionPauseRecording(_ sender : Any)
     {
@@ -230,219 +218,218 @@ class CameraViewController: UIViewController {
             self.isStartCapturing = true
         }
         btnPause.isSelected = !btnPause.isSelected
-        
-        
     }
     
-    @IBAction func actionChangeFPS(_ sender : UIButton)
-    {
-        
-        let FPStitle = sender.titleLabel?.text ?? "30"
-        var setFPS  = 30.0
-        
-        if FPStitle == "30"
-        {
-            setFPS = 60.0
-            self.fpsTypeObj = .FPS60
-        }
-        else
-        if FPStitle == "60"
-        {
-            setFPS = 30.0
-            self.fpsTypeObj = .FPS30
-        }
-                        
-        
-        _frame = Int(setFPS)
-        DispatchQueue.main.async
-        { [weak self] in
-            guard let self = self else { return }
-            
-            if let input = self._videoInput
-            {
-                var finalFormat : AVCaptureDevice.Format!
-                var maxFps: Double = 0
-                for vFormat in input.device.formats
-                {
-                    let ranges      = vFormat.videoSupportedFrameRateRanges
-                    let frameRates  = ranges[0]
-                    if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= setFPS
-                    {
-                        maxFps = frameRates.maxFrameRate
-                        if #available(iOS 13.0, *)
-                        {
-                            let dim = vFormat.formatDescription.dimensions
-                            
-                            if self.pixelTypeObj == .Pixel_720 //self._captureSession?.sessionPreset == .hd1280x720
-                            {
-                                if dim.width == 1280 && dim.height == 720
-                                {
-                                    finalFormat = vFormat
-                                    self.pixelTypeObj = .Pixel_720
-                                    let resolutionObj = ResolutionObj()
-                                    resolutionObj.width = Double(dim.width)
-                                    resolutionObj.height = Double(dim.height)
-                                    resolutionObj.framerate = setFPS
-                                    self.assetWriter?.resObj = resolutionObj
-                                }
-                            }
-                            else
-                            if self.pixelTypeObj == .Pixel_1080//self._captureSession?.sessionPreset == .some(.hd1920x1080)
-                            {
-                                if dim.width == 1920 && dim.height == 1080
-                                {
-                                    finalFormat = vFormat
-                                    self.pixelTypeObj = .Pixel_1080
-                                    let resolutionObj = ResolutionObj()
-                                    resolutionObj.width = Double(dim.width)
-                                    resolutionObj.height = Double(dim.height)
-                                    resolutionObj.framerate = setFPS
-                                    self.assetWriter?.resObj = resolutionObj
-                                }
-                            }
-                            else
-                            if self.pixelTypeObj == .Pixel_4K//self._captureSession?.sessionPreset == .some(.hd4K3840x2160)
-                            {
-                                if dim.width == 3840 && dim.height == 2160
-                                {
-                                    finalFormat = vFormat
-                                    self.pixelTypeObj = .Pixel_4K
-                                    let resolutionObj = ResolutionObj()
-                                    resolutionObj.width = Double(dim.width)
-                                    resolutionObj.height = Double(dim.height)
-                                    resolutionObj.framerate = setFPS
-                                    self.assetWriter?.resObj = resolutionObj
-                                }
-                            }
-                            
-                        }
-                        else
-                        {
-                            
-                        }
-                        
-                        
-                    }
-                }
-                
-                print(String(maxFps) + " fps")
-                if let formate = finalFormat
-                {
-                    do
-                {
-                    let camera = input.device
-                    try camera.lockForConfiguration()
-                    camera.activeFormat = formate
-                    camera.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
-                    camera.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
-                    camera.unlockForConfiguration()
-                }
-                    catch(let err)
-                    {
-                        print("error \(err.localizedDescription)")
-                        let controller = UIAlertController(title: "Video Recording", message: err.localizedDescription, preferredStyle: .alert)
-                        let okbtn = UIAlertAction(title: "OK", style: .default) { (_ ) in }
-                        controller.addAction(okbtn)
-                        self.present(controller, animated: true, completion: nil)
-                    }
-                }
-                
-            }
-            
-            // convert from double to Int so we can set btn title
-            
-            if let fpsString = Int(setFPS) as? Int
-            {
-                self.btnFPS.setTitle("\(fpsString)", for: .normal)
-            }
-            self.CalcualateDaysAndHour()
-            
-            
-        }
-    }
     
-    @IBAction func actionVideoResolution(_ sender : UIButton)
-    {
-        
-        DispatchQueue.main.async
-        { [weak self] in
-            guard let self = self else { return }
-            
-            let resolutionObj = ResolutionObj()
-            if self.pixelTypeObj == .Pixel_720
-            {
-                if self._captureSession?.canSetSessionPreset(.hd1920x1080) == true
-                {
-                    self._captureSession?.sessionPreset = .hd1920x1080
-                    self.pixelTypeObj = .Pixel_1080
-                    resolutionObj.width = 1920
-                    resolutionObj.height = 1080
-                }
-                else
-                {
-                    self._captureSession?.sessionPreset = .hd1280x720
-                    self.pixelTypeObj = .Pixel_720
-                    resolutionObj.width = 1280
-                    resolutionObj.height = 720
-                }
-                
-            }
-            else
-            if self.pixelTypeObj == .Pixel_1080
-            {
-                self.pixelTypeObj = .Pixel_4K
-                if self._captureSession?.canSetSessionPreset(.hd4K3840x2160) == true
-                {
-                    self._captureSession?.sessionPreset = .hd4K3840x2160
-                    resolutionObj.width = 3840
-                    resolutionObj.height = 2160
-                }
-                else
-                {
-                    self._captureSession?.sessionPreset = .hd1920x1080
-                    resolutionObj.width = 1920
-                    resolutionObj.height = 1080
-                }
-            }
-            else
-            {
-                self.pixelTypeObj = .Pixel_720
-                self._captureSession?.sessionPreset = .hd1280x720
-                resolutionObj.width = 1280
-                resolutionObj.height = 720
-                
-            }
-            
-            let fps = self.fpsTypeObj == .FPS30 ? 30 : 60
-            resolutionObj.framerate = Double(fps)
-            self.assetWriter?.resObj = resolutionObj
-            
-            if fps == 60
-            {
-                self.fpsTypeObj = .FPS30
-                self.actionChangeFPS(self.btnFPS)
-            }
-           
-            var str = ""
-            switch self.pixelTypeObj
-            {
-            case .Pixel_720:
-                str = "720P"
-                break
-            case .Pixel_1080:
-                str = "1080P"
-                break
-            case .Pixel_4K:
-                str = "4K"
-                break
-            }
-            
-            self.btnVideoResolution.setTitle(str, for: .normal)
-            self.CalcualateDaysAndHour()
-        }
-        
-        
-    }
+//    @IBAction func actionChangeFPS(_ sender : UIButton)
+//    {
+//
+//        let FPStitle = sender.titleLabel?.text ?? "30"
+//        var setFPS  = 30.0
+//
+//        if FPStitle == "30"
+//        {
+//            setFPS = 60.0
+//            self.fpsTypeObj = .FPS60
+//        }
+//        else
+//        if FPStitle == "60"
+//        {
+//            setFPS = 30.0
+//            self.fpsTypeObj = .FPS30
+//        }
+//
+//
+//        _frame = Int(setFPS)
+//        DispatchQueue.main.async
+//        { [weak self] in
+//            guard let self = self else { return }
+//
+//            if let input = self._videoInput
+//            {
+//                var finalFormat : AVCaptureDevice.Format!
+//                var maxFps: Double = 0
+//                for vFormat in input.device.formats
+//                {
+//                    let ranges      = vFormat.videoSupportedFrameRateRanges
+//                    let frameRates  = ranges[0]
+//                    if frameRates.maxFrameRate >= maxFps && frameRates.maxFrameRate <= setFPS
+//                    {
+//                        maxFps = frameRates.maxFrameRate
+//                        if #available(iOS 13.0, *)
+//                        {
+//                            let dim = vFormat.formatDescription.dimensions
+//
+//                            if self.pixelTypeObj == .Pixel_720 //self._captureSession?.sessionPreset == .hd1280x720
+//                            {
+//                                if dim.width == 1280 && dim.height == 720
+//                                {
+//                                    finalFormat = vFormat
+//                                    self.pixelTypeObj = .Pixel_720
+//                                    let resolutionObj = ResolutionObj()
+//                                    resolutionObj.width = Double(dim.width)
+//                                    resolutionObj.height = Double(dim.height)
+//                                    resolutionObj.framerate = setFPS
+//                                    self.assetWriter?.resObj = resolutionObj
+//                                }
+//                            }
+//                            else
+//                            if self.pixelTypeObj == .Pixel_1080//self._captureSession?.sessionPreset == .some(.hd1920x1080)
+//                            {
+//                                if dim.width == 1920 && dim.height == 1080
+//                                {
+//                                    finalFormat = vFormat
+//                                    self.pixelTypeObj = .Pixel_1080
+//                                    let resolutionObj = ResolutionObj()
+//                                    resolutionObj.width = Double(dim.width)
+//                                    resolutionObj.height = Double(dim.height)
+//                                    resolutionObj.framerate = setFPS
+//                                    self.assetWriter?.resObj = resolutionObj
+//                                }
+//                            }
+//                            else
+//                            if self.pixelTypeObj == .Pixel_4K//self._captureSession?.sessionPreset == .some(.hd4K3840x2160)
+//                            {
+//                                if dim.width == 3840 && dim.height == 2160
+//                                {
+//                                    finalFormat = vFormat
+//                                    self.pixelTypeObj = .Pixel_4K
+//                                    let resolutionObj = ResolutionObj()
+//                                    resolutionObj.width = Double(dim.width)
+//                                    resolutionObj.height = Double(dim.height)
+//                                    resolutionObj.framerate = setFPS
+//                                    self.assetWriter?.resObj = resolutionObj
+//                                }
+//                            }
+//
+//                        }
+//                        else
+//                        {
+//
+//                        }
+//
+//
+//                    }
+//                }
+//
+//                print(String(maxFps) + " fps")
+//                if let formate = finalFormat
+//                {
+//                    do
+//                {
+//                    let camera = input.device
+//                    try camera.lockForConfiguration()
+//                    camera.activeFormat = formate
+//                    camera.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
+//                    camera.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
+//                    camera.unlockForConfiguration()
+//                }
+//                    catch(let err)
+//                    {
+//                        print("error \(err.localizedDescription)")
+//                        let controller = UIAlertController(title: "Video Recording", message: err.localizedDescription, preferredStyle: .alert)
+//                        let okbtn = UIAlertAction(title: "OK", style: .default) { (_ ) in }
+//                        controller.addAction(okbtn)
+//                        self.present(controller, animated: true, completion: nil)
+//                    }
+//                }
+//
+//            }
+//
+//            // convert from double to Int so we can set btn title
+//
+//            if let fpsString = Int(setFPS) as? Int
+//            {
+//                self.btnFPS.setTitle("\(fpsString)", for: .normal)
+//            }
+//            self.CalcualateDaysAndHour()
+//
+//
+//        }
+//    }
+    
+//    @IBAction func actionVideoResolution(_ sender : UIButton)
+//    {
+//
+//        DispatchQueue.main.async
+//        { [weak self] in
+//            guard let self = self else { return }
+//
+//            let resolutionObj = ResolutionObj()
+//            if self.pixelTypeObj == .Pixel_720
+//            {
+//                if self._captureSession?.canSetSessionPreset(.hd1920x1080) == true
+//                {
+//                    self._captureSession?.sessionPreset = .hd1920x1080
+//                    self.pixelTypeObj = .Pixel_1080
+//                    resolutionObj.width = 1920
+//                    resolutionObj.height = 1080
+//                }
+//                else
+//                {
+//                    self._captureSession?.sessionPreset = .hd1280x720
+//                    self.pixelTypeObj = .Pixel_720
+//                    resolutionObj.width = 1280
+//                    resolutionObj.height = 720
+//                }
+//
+//            }
+//            else
+//            if self.pixelTypeObj == .Pixel_1080
+//            {
+//                self.pixelTypeObj = .Pixel_4K
+//                if self._captureSession?.canSetSessionPreset(.hd4K3840x2160) == true
+//                {
+//                    self._captureSession?.sessionPreset = .hd4K3840x2160
+//                    resolutionObj.width = 3840
+//                    resolutionObj.height = 2160
+//                }
+//                else
+//                {
+//                    self._captureSession?.sessionPreset = .hd1920x1080
+//                    resolutionObj.width = 1920
+//                    resolutionObj.height = 1080
+//                }
+//            }
+//            else
+//            {
+//                self.pixelTypeObj = .Pixel_720
+//                self._captureSession?.sessionPreset = .hd1280x720
+//                resolutionObj.width = 1280
+//                resolutionObj.height = 720
+//
+//            }
+//
+//            let fps = self.fpsTypeObj == .FPS30 ? 30 : 60
+//            resolutionObj.framerate = Double(fps)
+//            self.assetWriter?.resObj = resolutionObj
+//
+//            if fps == 60
+//            {
+//                self.fpsTypeObj = .FPS30
+//                self.actionChangeFPS(self.btnFPS)
+//            }
+//
+//            var str = ""
+//            switch self.pixelTypeObj
+//            {
+//            case .Pixel_720:
+//                str = "720P"
+//                break
+//            case .Pixel_1080:
+//                str = "1080P"
+//                break
+//            case .Pixel_4K:
+//                str = "4K"
+//                break
+//            }
+//
+//            self.btnVideoResolution.setTitle(str, for: .normal)
+//            self.CalcualateDaysAndHour()
+//        }
+//
+//
+//    }
     
     
     @IBAction func actionFlashOnOff(_ sender : Any)
@@ -480,7 +467,7 @@ class CameraViewController: UIViewController {
             if UIDevice.current.freeDiskSpaceInMB <= 200
             {
                 
-                let controller = UIAlertController(title: "Video Recording", message: "Your storage is almost full.", preferredStyle: .alert)
+                let controller = UIAlertController(title: App_Alert, message: "Your storage is almost full.", preferredStyle: .alert)
                 let okbtn = UIAlertAction(title: "Dismiss", style: .default) { [weak self](_ ) in
                     guard let self = self else { return }
                     self.actionCancel(self)
@@ -490,14 +477,19 @@ class CameraViewController: UIViewController {
             }
             else
             {
-                UIView.animate(withDuration: 0.25)
-                {
-                    self.viewMainFrameResolutionView.isHidden = true
-                }
                 
+                let animateduration = 0.45
+                viewInner.transform = .init(scaleX: 1.1, y: 1.1)
+                viewOuter.transform = .init(scaleX: 1.1, y: 1.1)
+                UIView.animate(withDuration: animateduration, delay: 0, usingSpringWithDamping: 0.95, initialSpringVelocity: 1.0, options: .curveEaseOut, animations: {
+                    self.viewInner.transform = .identity
+                    self.viewOuter.transform = .identity
+                }, completion: nil)
+                
+                self.viewMainFrameResolutionView.isHidden = true
                 self.HideTopButtons()
                 self.isStartCapturing = true
-                self.CheckAndUpdateTimeByTenSecond()
+//                self.CheckAndUpdateTimeByTenSecond()
                 let duration  = 1
                 timer = Timer.scheduledTimer(timeInterval: TimeInterval(duration), target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
                 
@@ -568,9 +560,29 @@ class CameraViewController: UIViewController {
         self.SelectButtons(btn: self.btn30FPS)
         self.UnSelectButtons(btn: self.btn60FPS)
         
-        // hide top btns
+        self.viewMinuteDot.CircleView()
+        self.viewHoursDot.CircleView()
+        self.lblMinutes.text = ""
+        self.lblHours.text = ""
+        self.viewMinuteDot.backgroundColor = theme_Green
+        self.viewHoursDot.backgroundColor = theme_Red
+        self.viewMainFrameResolutionView.isHidden = false
+        
+        
+        // hide top btns and lbls
         self.btnFPS.isHidden = true
         self.btnVideoResolution.isHidden = true
+        self.lblDiskRemainingInTime.isHidden = true
+        
+        
+        if CheckCurrentDeviceSupport4KRecording() == false
+        {
+            self.btn4KResolution.isHidden = true
+        }
+        else
+        {
+            self.btn4KResolution.isHidden = false
+        }
     }
     
     func SelectButtons(btn : UIButton)
@@ -707,6 +719,7 @@ class CameraViewController: UIViewController {
         }
     }
 
+    // MARK:- Setup Capture Session
     private func _setupCaptureSession()
     {
         let session = AVCaptureSession()
@@ -781,7 +794,7 @@ class CameraViewController: UIViewController {
         session.commitConfiguration()
         
         if let videoDataOutputConnection = output.connection(with: .video), videoDataOutputConnection.isVideoStabilizationSupported {
-            videoDataOutputConnection.preferredVideoStabilizationMode = .auto
+            videoDataOutputConnection.preferredVideoStabilizationMode = .standard
         }
 
         DispatchQueue.main.async
@@ -868,7 +881,7 @@ class CameraViewController: UIViewController {
     func CalcualateDaysAndHour()
     {
         let TempTimeObj = TimeRemainingObj()
-        
+        let duration = 1.0
         if pixelTypeObj == .Pixel_720
         {
             
@@ -889,14 +902,59 @@ class CameraViewController: UIViewController {
                 TempTimeObj.hours = inHour
                 TempTimeObj.minute = inMin
                 
-                if inHour > 0
+                let minute30 = oneMinValue * 30
+                let hour1 = minute30 * 2
+                let oneGB = 1000
+                
+                if minute30 < 1000
                 {
-                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+                    let obj = "\(minute30)".prefix(1)
+                    let first = obj.first!
+                    let makstr = "0.\(first)"
+                    print("In GB \(makstr) GB for Minute")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
+                   
                 }
                 else
                 {
-                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+                    let obj = "\(minute30)".prefix(2)
+                    let first = obj.first!
+                    let last = obj.last!
+                    let makstr = "\(first).\(last)"
+                    print("In GB \(makstr) GB for Minute")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
                 }
+                
+                
+                if hour1 > oneGB
+                {
+                    let obj = "\(hour1)".prefix(2)
+                    let first = obj.first!
+                    let last = obj.last!
+                    let makstr = "\(first).\(last)"
+                    print("In GB \(makstr) for Hour")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                    }
+                    
+                    
+                }
+                
+//                if inHour > 0
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+//                }
+//                else
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+//                }
                 
             }
             else
@@ -916,14 +974,71 @@ class CameraViewController: UIViewController {
                 TempTimeObj.hours = inHour
                 TempTimeObj.minute = inMin
                 
-                if inHour > 0
+                let minute30 = oneMinValue * 30
+                let hour1 = minute30 * 2
+                let oneGB = 1000
+                
+                if minute30 < 1000
                 {
-                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+                    let obj = "\(minute30)".prefix(1)
+                    let first = obj.first!
+                    let makstr = "0.\(first)"
+                    print("In GB \(makstr) GB for Minute")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
                 }
                 else
                 {
-                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+                    let obj = "\(minute30)".prefix(2)
+                    let first = obj.first!
+                    let last = obj.last!
+                    let makstr = "\(first).\(last)"
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
                 }
+                
+                if hour1 > oneGB
+                {
+                    
+                    if "\(hour1)".count > 4
+                    {
+                        
+                        let obj = "\(hour1)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(hour1)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                }
+                
+//                if inHour > 0
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+//                }
+//                else
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+//                }
             }
             
         }
@@ -947,14 +1062,88 @@ class CameraViewController: UIViewController {
                 TempTimeObj.hours = inHour
                 TempTimeObj.minute = inMin
                 
-                if inHour > 0
+                let minute30 = oneMinValue * 30
+                let hour1 = minute30 * 2
+                let oneGB = 1000
+                
+                if minute30 < 1000
                 {
-                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+                    let obj = "\(minute30)".prefix(1)
+                    let first = obj.first!
+                    let makstr = "0.\(first)"
+                    print("In GB \(makstr) GB for Minute")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
                 }
                 else
                 {
-                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+                    
+                    if "\(minute30)".count > 4
+                    {
+                        let obj = "\(minute30)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(minute30)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    
+                    
                 }
+                
+                if hour1 > oneGB
+                {
+                    if "\(hour1)".count > 4
+                    {
+                        let obj = "\(hour1)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(hour1)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+             
+                }
+                
+                
+//                if inHour > 0
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+//                }
+//                else
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+//                }
             }
             else
             {
@@ -973,14 +1162,88 @@ class CameraViewController: UIViewController {
                 TempTimeObj.hours = inHour
                 TempTimeObj.minute = inMin
                 
-                if inHour > 0
+                let minute30 = oneMinValue * 30
+                let hour1 = minute30 * 2
+                let oneGB = 1000
+                
+                if minute30 < 1000
                 {
-                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+                    let obj = "\(minute30)".prefix(1)
+                    let first = obj.first!
+                    let makstr = "0.\(first)"
+                    print("In GB \(makstr) GB for Minute")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
                 }
                 else
                 {
-                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+                    
+                    if "\(minute30)".count > 4
+                    {
+                        let obj = "\(minute30)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(minute30)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    
+                    
                 }
+                
+                if hour1 > oneGB
+                {
+                    
+                    if "\(hour1)".count > 4
+                    {
+                        let obj = "\(hour1)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(hour1)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                        
+                    }
+                }
+                
+//                if inHour > 0
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+//                }
+//                else
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+//                }
             }
         }
         else
@@ -1003,14 +1266,85 @@ class CameraViewController: UIViewController {
                 TempTimeObj.hours = inHour
                 TempTimeObj.minute = inMin
                 
-                if inHour > 0
+                let minute30 = oneMinValue * 30
+                let hour1 = minute30 * 2
+                let oneGB = 1000
+                
+                if minute30 < 1000
                 {
-                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+                    let obj = "\(minute30)".prefix(1)
+                    let first = obj.first!
+                    let makstr = "0.\(first)"
+                    print("In GB \(makstr) GB for Minute")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
                 }
                 else
                 {
-                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+                    if "\(minute30)".count > 4
+                    {
+                        let obj = "\(minute30)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(minute30)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    
                 }
+                
+                if hour1 > oneGB
+                {
+                    if "\(hour1)".count > 4
+                    {
+                        let obj = "\(hour1)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(hour1)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                    
+                }
+                
+//                if inHour > 0
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+//                }
+//                else
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+//                }
             }
             else
             {
@@ -1029,14 +1363,86 @@ class CameraViewController: UIViewController {
                 TempTimeObj.hours = inHour
                 TempTimeObj.minute = inMin
                 
-                if inHour > 0
+                let minute30 = oneMinValue * 30
+                let hour1 = minute30 * 2
+                let oneGB = 1000
+                
+                if minute30 < 1000
                 {
-                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+                    let obj = "\(minute30)".prefix(1)
+                    let first = obj.first!
+                    let makstr = "0.\(first)"
+                    print("In GB \(makstr) GB for Minute")
+                    UIView.animate(withDuration: duration)
+                    {
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                    }
                 }
                 else
                 {
-                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+                    if "\(minute30)".count > 4
+                    {
+                        let obj = "\(minute30)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(minute30)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        }
+                    }
+                    
+                   
                 }
+                
+                if hour1 > oneGB
+                {
+                    if "\(hour1)".count > 4
+                    {
+                        let obj = "\(hour1)".prefix(3)
+                        let first = obj.prefix(2)
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                    else
+                    {
+                        let obj = "\(hour1)".prefix(2)
+                        let first = obj.first!
+                        let last = obj.last!
+                        let makstr = "\(first).\(last)"
+                        print("In GB \(makstr) for Hour")
+                        UIView.animate(withDuration: duration)
+                        {
+                            self.lblHours.text = "\(makstr) GB with 1 hr Video"
+                        }
+                    }
+                    
+                }
+                
+//                if inHour > 0
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inHour) Hours\n\(inMin) Minutes"
+//                }
+//                else
+//                {
+//                    self.lblDiskRemainingInTime.text = "\(inMin) Minutes Left"
+//                }
             }
         }
         
@@ -1079,7 +1485,7 @@ class CameraViewController: UIViewController {
             
             if let input = self._videoInput
             {
-                var finalFormat : AVCaptureDevice.Format!
+                var finalFormat : AVCaptureDevice.Format?
                 var maxFps: Double = 0
                 for vFormat in input.device.formats
                 {
@@ -1140,13 +1546,13 @@ class CameraViewController: UIViewController {
                 }
                 
                 print(String(maxFps) + " fps")
-                if let formate = finalFormat
+                if let format = finalFormat
                 {
                     do
                 {
                     let camera = input.device
                     try camera.lockForConfiguration()
-                    camera.activeFormat = formate
+                    camera.activeFormat = format
                     camera.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
                     camera.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
                     camera.unlockForConfiguration()
@@ -1154,7 +1560,7 @@ class CameraViewController: UIViewController {
                     catch(let err)
                     {
                         print("error \(err.localizedDescription)")
-                        let controller = UIAlertController(title: "Video Recording", message: err.localizedDescription, preferredStyle: .alert)
+                        let controller = UIAlertController(title: App_Alert, message: err.localizedDescription, preferredStyle: .alert)
                         let okbtn = UIAlertAction(title: "OK", style: .default) { (_ ) in }
                         controller.addAction(okbtn)
                         self.present(controller, animated: true, completion: nil)
@@ -1162,9 +1568,8 @@ class CameraViewController: UIViewController {
                 }
                 
             }
-        
-            self.CalcualateDaysAndHour()
         }
+        self.CalcualateDaysAndHour()
     }
     
     
@@ -1212,8 +1617,9 @@ class CameraViewController: UIViewController {
             let fps = self.fpsTypeObj == .FPS30 ? 30 : 60
             resolutionObj.framerate = Double(fps)
             self.assetWriter?.resObj = resolutionObj
-            self.CalcualateDaysAndHour()
+            
         }
+        self.CalcualateDaysAndHour()
     }
     
     deinit
@@ -1227,7 +1633,7 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate,AVC
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         
-        print(_videoInput?.device.activeFormat)
+//        print(_videoInput?.device.activeFormat)
         
         if self.isStartCapturing == true
         {
@@ -1237,14 +1643,11 @@ extension CameraViewController: AVCaptureVideoDataOutputSampleBufferDelegate,AVC
                 let description = CMSampleBufferGetFormatDescription(sampleBuffer)!
                 if description.mediaType == .video
                 {
-                    let bufferType =  MediaType.video
-                    self.assetWriter!.write(buffer: sampleBuffer, bufferType: bufferType)
-                    
+                    self.assetWriter!.write(buffer: sampleBuffer, bufferType: .video)
                 }
                 else
                 {
-                    let bufferType = MediaType.audio
-                    self.assetWriter!.write(buffer: sampleBuffer, bufferType: bufferType)
+                    self.assetWriter!.write(buffer: sampleBuffer, bufferType: .audio)
                 }
             }
             else

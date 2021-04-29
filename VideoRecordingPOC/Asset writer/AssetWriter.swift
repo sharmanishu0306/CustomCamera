@@ -6,48 +6,6 @@ import AVFoundation
 import AVKit
 
 
-enum MediaType
-{
-    case audio
-    case video
-}
-
-enum FPSType
-{
-    case FPS30
-    case FPS60
-}
-
-enum PixelType
-{
-    case Pixel_720
-    case Pixel_1080
-    case Pixel_4K
-}
-
-class ResolutionObj
-{
-    var width : Double = 1280
-    var height : Double = 720
-    var framerate : Double = 30
-    init() {
-        
-    }
-}
-
-class TimeRemainingObj
-{
-    var hours : Int = 0
-    var minute : Int = 0
-    init() {}
-}
-
-
-protocol VideoRecordingCompletedDelegate : class
-{
-    func VideoRecordingCompletedAt(url : URL)
-}
-
 class AssetWriter
 {
     private var assetWriter: AVAssetWriter?
@@ -184,25 +142,31 @@ class AssetWriter
     public func write(buffer: CMSampleBuffer, bufferType: MediaType)
     {
         
-        writeQueue.sync {
-            if self.assetWriter == nil {
-                if bufferType == .audio {
+        writeQueue.sync
+        {
+            if self.assetWriter == nil
+            {
+                if bufferType == .audio
+                {
                     self.setupWriter(buffer: buffer)
                 }
             }
             
-            if self.assetWriter == nil {
+            if self.assetWriter == nil
+            {
                 return
             }
             
-            if self.assetWriter?.status == .unknown {
+            if self.assetWriter?.status == .unknown
+            {
                 print("Start writing")
                 let startTime = CMSampleBufferGetPresentationTimeStamp(buffer)
                 self.assetWriter?.startWriting()
                 self.assetWriter?.startSession(atSourceTime: startTime)
                 print("Writing at path \(String(describing: self.assetWriter?.outputURL))")
             }
-            if self.assetWriter?.status == .failed {
+            if self.assetWriter?.status == .failed
+            {
                 print("assetWriter status: failed error: \(String(describing: self.assetWriter?.error))")
                 return
             }
@@ -211,13 +175,20 @@ class AssetWriter
             print("Size in MB \(size)")
             print("Remaining Size in MB \(UIDevice.current.freeDiskSpaceInGB)")
             
-            if CMSampleBufferDataIsReady(buffer) == true {
-                if bufferType == .video {
-                    if let videoInput = self.videoInput, videoInput.isReadyForMoreMediaData {
+            if CMSampleBufferDataIsReady(buffer) == true
+            {
+                if bufferType == .video
+                {
+                    if let videoInput = self.videoInput, videoInput.isReadyForMoreMediaData
+                    {
                         videoInput.append(buffer)
                     }
-                } else if bufferType == .audio {
-                    if let audioInput = self.audioInput, audioInput.isReadyForMoreMediaData {
+                }
+                else
+                if bufferType == .audio
+                {
+                    if let audioInput = self.audioInput, audioInput.isReadyForMoreMediaData
+                    {
                         audioInput.append(buffer)
                     }
                 }
@@ -252,11 +223,10 @@ class AssetWriter
         writeQueue.sync
         {
             self.assetWriter?.finishWriting(completionHandler:
-                                                {
+            {
                 print("finishWriting at \(self.filePath)")
                     DispatchQueue.main.async
-                    { [weak self] in
-                        guard let self = self else { return }
+                    { [weak self] in guard let self = self else { return }
                         self.delegate?.VideoRecordingCompletedAt(url:  URL(fileURLWithPath: self.filePath))
                     }
             })

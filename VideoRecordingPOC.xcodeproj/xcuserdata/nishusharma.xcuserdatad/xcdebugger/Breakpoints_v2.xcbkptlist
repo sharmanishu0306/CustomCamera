@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3A5E77F6-1750-43E8-8C7F-0EE5846C5797"
+            uuid = "F991CE90-CDB7-4D09-B8BA-7DDB3E1DF515"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VideoRecordingPOC/Camera recorder/CameraViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "593"
-            endingLineNumber = "593"
-            landmarkName = "_setupCaptureSession()"
+            startingLineNumber = "909"
+            endingLineNumber = "909"
+            landmarkName = "CalcualateDaysAndHour()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

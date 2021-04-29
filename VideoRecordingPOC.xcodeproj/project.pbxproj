@@ -17,6 +17,8 @@
 		F301F75B261D52C9007CACFA /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F301F75A261D52C9007CACFA /* ViewController.xib */; };
 		F3B997B2262D4FD60047E8B0 /* DiskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B997B1262D4FD60047E8B0 /* DiskStatus.swift */; };
 		F3B997B6262D554E0047E8B0 /* SampleRecordData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B997B5262D554E0047E8B0 /* SampleRecordData.swift */; };
+		F3BCDAD3263A787F00FBA81D /* Protocol&Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3BCDAD2263A787F00FBA81D /* Protocol&Enums.swift */; };
+		F3D6E54326396EA80009314C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D6E54226396EA80009314C /* Theme.swift */; };
 		F3E5926D2622CBE9003D1B35 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E5926C2622CBE9003D1B35 /* Extension.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +35,8 @@
 		F301F75A261D52C9007CACFA /* ViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
 		F3B997B1262D4FD60047E8B0 /* DiskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskStatus.swift; sourceTree = "<group>"; };
 		F3B997B5262D554E0047E8B0 /* SampleRecordData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleRecordData.swift; sourceTree = "<group>"; };
+		F3BCDAD2263A787F00FBA81D /* Protocol&Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Protocol&Enums.swift"; sourceTree = "<group>"; };
+		F3D6E54226396EA80009314C /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		F3E5926C2622CBE9003D1B35 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,6 +70,8 @@
 		F301F738261D511A007CACFA /* VideoRecordingPOC */ = {
 			isa = PBXGroup;
 			children = (
+				F3BCDAD1263A787300FBA81D /* Protocol and Enums */,
+				F3D6E54126396E980009314C /* Theme */,
 				F3B997B4262D55380047E8B0 /* Sample Record Data */,
 				F3B997B0262D4FB50047E8B0 /* Disk Status */,
 				F3E5926B2622CBD7003D1B35 /* Extension */,
@@ -112,6 +118,22 @@
 				F3B997B5262D554E0047E8B0 /* SampleRecordData.swift */,
 			);
 			path = "Sample Record Data";
+			sourceTree = "<group>";
+		};
+		F3BCDAD1263A787300FBA81D /* Protocol and Enums */ = {
+			isa = PBXGroup;
+			children = (
+				F3BCDAD2263A787F00FBA81D /* Protocol&Enums.swift */,
+			);
+			path = "Protocol and Enums";
+			sourceTree = "<group>";
+		};
+		F3D6E54126396E980009314C /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				F3D6E54226396EA80009314C /* Theme.swift */,
+			);
+			path = Theme;
 			sourceTree = "<group>";
 		};
 		F3E5926B2622CBD7003D1B35 /* Extension */ = {
@@ -194,9 +216,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3B997B2262D4FD60047E8B0 /* DiskStatus.swift in Sources */,
+				F3D6E54326396EA80009314C /* Theme.swift in Sources */,
 				F3E5926D2622CBE9003D1B35 /* Extension.swift in Sources */,
 				F3B997B6262D554E0047E8B0 /* SampleRecordData.swift in Sources */,
 				F301F73E261D511A007CACFA /* ViewController.swift in Sources */,
+				F3BCDAD3263A787F00FBA81D /* Protocol&Enums.swift in Sources */,
 				F301F757261D521E007CACFA /* AssetWriter.swift in Sources */,
 				F301F73A261D511A007CACFA /* AppDelegate.swift in Sources */,
 				F301F752261D51AD007CACFA /* CameraViewController.swift in Sources */,
