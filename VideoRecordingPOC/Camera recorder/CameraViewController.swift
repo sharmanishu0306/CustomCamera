@@ -564,6 +564,8 @@ class CameraViewController: UIViewController {
         self.viewHoursDot.CircleView()
         self.lblMinutes.text = ""
         self.lblHours.text = ""
+        self.lblMinutes.textColor = WhiteClr
+        self.lblHours.textColor = WhiteClr
         self.viewMinuteDot.backgroundColor = theme_Green
         self.viewHoursDot.backgroundColor = theme_Red
         self.viewMainFrameResolutionView.isHidden = false
@@ -752,9 +754,8 @@ class CameraViewController: UIViewController {
 
         let audiooutput = AVCaptureAudioDataOutput()
         guard session.canAddOutput(audiooutput) else { return }
-
         
-        audiooutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.yusuke024.audio"))
+        audiooutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.videoapp.audio"))
         session.beginConfiguration()
         session.addOutput(audiooutput)
         session.commitConfiguration()
@@ -787,8 +788,8 @@ class CameraViewController: UIViewController {
 
         let output = AVCaptureVideoDataOutput()
         guard session.canAddOutput(output) else { return }
-        
-        output.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.yusuke024.video"))
+        output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)]
+        output.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.videoapp.video"))
         session.beginConfiguration()
         session.addOutput(output)
         session.commitConfiguration()

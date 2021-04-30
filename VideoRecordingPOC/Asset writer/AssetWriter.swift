@@ -61,8 +61,10 @@ class AssetWriter
                 AVVideoCodecKey: AVVideoCodecType.hevc,
                 AVVideoWidthKey: resObj.width,
                 AVVideoHeightKey: resObj.height,
-                AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate]
-                ] as [String : Any]
+                AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate,                                                      AVVideoAverageBitRateKey : 60000000,
+                                                    AVVideoMaxKeyFrameIntervalDurationKey : 0.0,
+                                                    AVVideoMaxKeyFrameIntervalKey : 1.0,
+                                                    AVVideoAllowFrameReorderingKey : true] ] as [String : Any]
         }
         else
         {
@@ -70,8 +72,12 @@ class AssetWriter
                 AVVideoCodecKey: AVVideoCodecType.h264,
                 AVVideoWidthKey: resObj.width,
                 AVVideoHeightKey: resObj.height,
-                AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate]
-                ] as [String : Any]
+                AVVideoCompressionPropertiesKey : [ AVVideoExpectedSourceFrameRateKey: resObj.framerate,
+                                                    AVVideoAverageNonDroppableFrameRateKey : resObj.framerate,
+                                                    AVVideoAverageBitRateKey : 60000000,
+                                                    AVVideoMaxKeyFrameIntervalDurationKey : 0.0,
+                                                    AVVideoMaxKeyFrameIntervalKey : 1.0,
+                                                    AVVideoAllowFrameReorderingKey : true] ] as [String : Any]
         }
 //        let writerOutputSettings = [
 //            AVVideoCodecKey: AVVideoCodecType.hevc,
