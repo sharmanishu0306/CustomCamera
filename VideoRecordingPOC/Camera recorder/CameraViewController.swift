@@ -986,7 +986,7 @@ class CameraViewController: UIViewController {
                     print("In GB \(makstr) GB for Minute")
                     UIView.animate(withDuration: duration)
                     {
-                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                     }
                 }
                 else
@@ -997,7 +997,7 @@ class CameraViewController: UIViewController {
                     let makstr = "\(first).\(last)"
                     UIView.animate(withDuration: duration)
                     {
-                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                     }
                 }
                 
@@ -1074,7 +1074,7 @@ class CameraViewController: UIViewController {
                     print("In GB \(makstr) GB for Minute")
                     UIView.animate(withDuration: duration)
                     {
-                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                     }
                 }
                 else
@@ -1088,7 +1088,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     else
@@ -1099,7 +1099,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     
@@ -1174,7 +1174,7 @@ class CameraViewController: UIViewController {
                     print("In GB \(makstr) GB for Minute")
                     UIView.animate(withDuration: duration)
                     {
-                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                     }
                 }
                 else
@@ -1188,7 +1188,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     else
@@ -1199,7 +1199,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     
@@ -1278,7 +1278,7 @@ class CameraViewController: UIViewController {
                     print("In GB \(makstr) GB for Minute")
                     UIView.animate(withDuration: duration)
                     {
-                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                     }
                 }
                 else
@@ -1291,7 +1291,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     else
@@ -1302,7 +1302,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     
@@ -1375,7 +1375,7 @@ class CameraViewController: UIViewController {
                     print("In GB \(makstr) GB for Minute")
                     UIView.animate(withDuration: duration)
                     {
-                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                        self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                     }
                 }
                 else
@@ -1388,7 +1388,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     else
@@ -1399,7 +1399,7 @@ class CameraViewController: UIViewController {
                         let makstr = "\(first).\(last)"
                         UIView.animate(withDuration: duration)
                         {
-                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video *"
+                            self.lblMinutes.text = "\(makstr) GB with 30 mins Video"
                         }
                     }
                     
