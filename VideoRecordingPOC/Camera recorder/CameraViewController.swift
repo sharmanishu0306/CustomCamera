@@ -85,6 +85,7 @@ class CameraViewController: UIViewController {
         self.SelectButtons(btn: self.btn720Resolution)
         self.UnSelectButtons(btn: self.btn1080resolution)
         self.UnSelectButtons(btn: self.btn4KResolution)
+        self.btn60FPS.isHidden = false
         
         if pixelTypeObj == .Pixel_720
         {
@@ -117,7 +118,7 @@ class CameraViewController: UIViewController {
         self.SelectButtons(btn: self.btn1080resolution)
         self.UnSelectButtons(btn: self.btn720Resolution)
         self.UnSelectButtons(btn: self.btn4KResolution)
-        
+        self.btn60FPS.isHidden = false
         if pixelTypeObj == .Pixel_1080
         {
             
@@ -133,7 +134,18 @@ class CameraViewController: UIViewController {
             }
             else
             {
-                SetFps(setFPS: getFps)
+                // first check if current device is support 1080 on 60FPS and then set., eg: 5s doesnt support 60fps for 1080p
+                if CheckResolutionAndFrameSupport.isSupport1080On60Fps(input: self._videoInput) == true
+                {
+                    SetFps(setFPS: getFps)
+                }
+                else
+                {
+                    self.fpsTypeObj = .FPS30
+                    self.SelectButtons(btn: self.btn30FPS)
+                    self.UnSelectButtons(btn: self.btn60FPS)
+                }
+                
             }
         }
         
@@ -147,7 +159,7 @@ class CameraViewController: UIViewController {
         self.SelectButtons(btn: self.btn4KResolution)
         self.UnSelectButtons(btn: self.btn1080resolution)
         self.UnSelectButtons(btn: self.btn720Resolution)
-        
+        self.checkIfDeviceSupport4KWith60FPS()
         if pixelTypeObj == .Pixel_4K
         {
             
@@ -163,7 +175,18 @@ class CameraViewController: UIViewController {
             }
             else
             {
-                SetFps(setFPS: getFps)
+                // first check if current device is support 4K on 60FPS and then set.
+                if CheckResolutionAndFrameSupport.isSupport4KOn60Fps(input: self._videoInput) == true
+                {
+                    self.SetFps(setFPS: getFps)
+                }
+                else
+                {
+                    self.fpsTypeObj = .FPS30
+                    self.SelectButtons(btn: self.btn30FPS)
+                    self.UnSelectButtons(btn: self.btn60FPS)
+                }
+                
             }
         }
     }
@@ -510,6 +533,7 @@ class CameraViewController: UIViewController {
     }
     
     
+    //MARK:- Viewdidload and Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -521,6 +545,35 @@ class CameraViewController: UIViewController {
         
     }
     
+    override func viewDidAppear(_ animated: Bool){
+        super.viewDidAppear(animated)
+        
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                guard let self = self else { return }
+                if granted
+                {
+                    DispatchQueue.main.async
+                    { [weak self] in  guard let self = self else { return }
+                        self._setupCaptureSession()
+                    }
+                }
+            }
+        case .restricted:
+            break
+        case .denied:
+            break
+        case .authorized:
+            DispatchQueue.main.async
+            { [weak self] in  guard let self = self else { return }
+                self._setupCaptureSession()
+            }
+        @unknown default: break
+            
+        }
+    }
+
     
     func SetupTheme()
     {
@@ -691,36 +744,7 @@ class CameraViewController: UIViewController {
         }
         
     }
-    
-    override func viewDidAppear(_ animated: Bool){
-        super.viewDidAppear(animated)
-        
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                guard let self = self else { return }
-                if granted
-                {
-                    DispatchQueue.main.async
-                    { [weak self] in  guard let self = self else { return }
-                        self._setupCaptureSession()
-                    }
-                }
-            }
-        case .restricted:
-            break
-        case .denied:
-            break
-        case .authorized:
-            DispatchQueue.main.async
-            { [weak self] in  guard let self = self else { return }
-                self._setupCaptureSession()
-            }
-        @unknown default: break
-            
-        }
-    }
-
+   
     // MARK:- Setup Capture Session
     private func _setupCaptureSession()
     {
@@ -842,6 +866,20 @@ class CameraViewController: UIViewController {
         self.CalcualateDaysAndHour()
             
     }
+    
+    func checkIfDeviceSupport4KWith60FPS()
+    {
+        let is4Ksupport = CheckResolutionAndFrameSupport.isSupport4KOn60Fps(input: self._videoInput)
+        if is4Ksupport == true
+        {
+            self.btn60FPS.isHidden = false
+        }
+        else
+        {
+            self.btn60FPS.isHidden = true
+        }
+    }
+    
     
     
     func toggleFlash()
