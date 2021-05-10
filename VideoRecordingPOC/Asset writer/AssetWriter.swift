@@ -65,14 +65,30 @@ class AssetWriter
         }
         else
         {
-            writerOutputSettings = [
-                AVVideoCodecKey: AVVideoCodecType.h264,
-                AVVideoWidthKey: resObj.width,
-                AVVideoHeightKey: resObj.height,
-                AVVideoCompressionPropertiesKey : [AVVideoExpectedSourceFrameRateKey: resObj.framerate,AVVideoAverageBitRateKey : 60000000,
-                                                   AVVideoMaxKeyFrameIntervalDurationKey : 0.0,
-                                                   AVVideoMaxKeyFrameIntervalKey : 1.0,
-                                                   AVVideoAllowFrameReorderingKey : true]] as [String : Any]
+            
+            if resObj.height == 2160
+            {
+                writerOutputSettings = [
+                    AVVideoCodecKey: AVVideoCodecType.h264,
+                    AVVideoWidthKey: resObj.width,
+                    AVVideoHeightKey: resObj.height,
+                    AVVideoCompressionPropertiesKey : [AVVideoExpectedSourceFrameRateKey: resObj.framerate,
+                                                       AVVideoAverageBitRateKey : 60000000,
+                                                       AVVideoMaxKeyFrameIntervalDurationKey : 0.0,
+                                                       AVVideoMaxKeyFrameIntervalKey : 1.0,
+                                                       AVVideoAllowFrameReorderingKey : true
+                                                       ]] as [String : Any]
+            }
+            else
+            {
+                writerOutputSettings = [
+                    AVVideoCodecKey: AVVideoCodecType.h264,
+                    AVVideoWidthKey: resObj.width,
+                    AVVideoHeightKey: resObj.height,
+                    AVVideoCompressionPropertiesKey : [AVVideoExpectedSourceFrameRateKey: resObj.framerate]] as [String : Any]
+                
+            }
+            
         }
 //        let writerOutputSettings = [
 //            AVVideoCodecKey: AVVideoCodecType.hevc,

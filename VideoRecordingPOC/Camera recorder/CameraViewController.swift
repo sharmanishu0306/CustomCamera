@@ -1590,6 +1590,11 @@ class CameraViewController: UIViewController {
                     do
                 {
                     let camera = input.device
+                    if camera.isSmoothAutoFocusSupported == true
+                    {
+                        camera.isSmoothAutoFocusEnabled = true
+                    }
+                    camera.activeColorSpace = .sRGB
                     try camera.lockForConfiguration()
                     camera.activeFormat = format
                     camera.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: Int32(maxFps))
